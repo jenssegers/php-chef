@@ -2,9 +2,9 @@
 
 class Chef {
 
-	protected $server;
-	protected $key;
-	protected $client;
+    protected $server;
+    protected $key;
+    protected $client;
     protected $version;
 
     // the number of seconds to wait while trying to connect
@@ -34,7 +34,7 @@ class Chef {
      * @param  string  $method
      * @return mixed
      */
-	function api($endpoint, $method = 'GET', $data = FALSE) {
+    function api($endpoint, $method = 'GET', $data = FALSE) {
         // json encode data
         if ($data && !is_string($data))
             $data = json_encode($data);
@@ -58,9 +58,9 @@ class Chef {
 
         // initiate curl requset
         $ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint);
-    	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
@@ -73,14 +73,14 @@ class Chef {
         }
 
         // execute
-    	$response = curl_exec($ch);
+        $response = curl_exec($ch);
         curl_close($ch);
-		
+        
         if ($response !== FALSE)
             return json_decode($response);
 
         return $response;
-	}
+    }
 
     /**
      * Sign API calls with private key.

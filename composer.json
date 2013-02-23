@@ -1,6 +1,7 @@
 {
     "name": "jenssegers/chef",
     "description": "Opscode Chef API library",
+    "keywords": ["laravel","chef"],
     "authors": [
         {
             "name": "Jens Segers",
@@ -9,7 +10,8 @@
     ],
     "license" : "MIT",
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
     },
     "autoload": {
         "psr-0": {
