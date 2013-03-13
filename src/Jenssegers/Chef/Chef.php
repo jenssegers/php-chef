@@ -60,7 +60,7 @@ class Chef {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // this should be verified
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
@@ -80,6 +80,67 @@ class Chef {
             return json_decode($response);
 
         return $response;
+    }
+
+    /**
+     * Encrypt a value with a key
+     *
+     * @param  mixed   $data
+     * @param  string  $key
+     * @return object
+     */
+    function encrypt($data, $key) {
+
+        // encryption method
+        $method = 'aes-256-cbc';
+
+        // generate initialization vector
+        $size = openssl_cipher_iv_length($method);
+        $iv = mcrypt_create_iv($size, MCRYPT_RAND);
+
+        // check if file name was given
+        if (file_exists($key)) {
+            $key = file_get_contents($key);
+        }
+
+        // create wrapper object
+        $wrapper = new \stdClass;
+        $wrapper->json_wrapper = $data;
+        $json = json_encode($wrapper);
+
+        $object = new \stdClass;
+        $object->iv = base64_encode($iv);
+        $object->cipher = 'aes-256-cbc';
+        $object->version = 1;
+        $object->encrypted_data = openssl_encrypt($json, $method, pack('H*', hash('sha256', $key)), false, $iv);
+
+        return $object;
+    }
+
+    /**
+     * Decrypt a value with a key
+     *
+     * @param  object  $data
+     * @param  string  $key
+     * @return mixed
+     */
+    function decrypt($data, $key) {
+
+        // can only decrypt a valid object
+        if (!is_object($data) || !isset($data->encrypted_data)) {
+            return false;
+        }
+
+        // check if file name was given
+        if (file_exists($key)) {
+            $key = file_get_contents($key);
+        }
+
+        // decrypt data
+        $json = openssl_decrypt($data->encrypted_data, $data->cipher, pack('H*', hash('sha256', $key)), false, base64_decode($data->iv));
+    
+        // return content
+        return json_decode($json)->json_wrapper;
     }
 
     /**

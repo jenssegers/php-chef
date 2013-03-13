@@ -8,21 +8,21 @@ Installation
 
 Add `jenssegers/chef` as a requirement to composer.json:
 
-	{
-	    "require": {
-	        "jenssegers/chef": "dev-master"
-	    }
-	}
+    {
+        "require": {
+            "jenssegers/chef": "dev-master"
+        }
+    }
 
 Update your packages with `composer update` or install with `composer install`.
 
 Register the Chef package with Laravel in `app/config/app.php`, add the following provider:
 
-	'Jenssegers\Chef\ChefServiceProvider',
+    'Jenssegers\Chef\ChefServiceProvider',
 
 And this alias:
 
-	'Chef'			  => 'Jenssegers\Chef\Facades\Chef'
+    'Chef'            => 'Jenssegers\Chef\Facades\Chef'
 
 Configuration
 =============
@@ -54,12 +54,12 @@ Example
 
 Get nodes:
 
-	$nodes = Chef::api('nodes');
+    $nodes = Chef::api('nodes');
 
 Create a databag:
 
-	// create databag
-	$bag = new stdClass;
-	$bag->name = "test";
+    // create databag
+    $bag = new stdClass;
+    $bag->name = "test";
 
-	$resp = Chef::api('data', 'POST', $bag);
+    $resp = Chef::api('data', 'POST', $bag);
