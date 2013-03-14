@@ -19,8 +19,9 @@ class Chef {
      * @param  string  $version
      * @return void
      */
-    function __construct($server, $client, $key, $version) {
+    function __construct($server, $namespace, $client, $key, $version) {
         $this->server = $server;
+		$this->namespace = $namespace;
         $this->client = $client;
         $this->key = $key;
         $this->version = $version;
@@ -47,6 +48,8 @@ class Chef {
         );
 
         // endpoint needs to start with forward slash
+        $endpoint = $this->namespace . $endpoint;
+        
         if (substr($endpoint, 0, 1) != '/')
             $endpoint = '/' . $endpoint;
 
@@ -178,7 +181,9 @@ class Chef {
         // add signature to header
         $shrapnel = explode("\n", chunk_split($encoded, 60));
         for ($i = 0; $i < count($shrapnel); $i++) {
-            $header[] = "X-Ops-Authorization-" . ($i + 1) . ": " . trim($shrapnel[$i]);
+			if (strlen(trim($shrapnel[$i])) > 0) {
+            	$header[] = "X-Ops-Authorization-" . ($i + 1) . ": " . trim($shrapnel[$i]);
+			}
         }
     }
 
