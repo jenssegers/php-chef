@@ -178,7 +178,9 @@ class Chef {
         // add signature to header
         $shrapnel = explode("\n", chunk_split($encoded, 60));
         for ($i = 0; $i < count($shrapnel); $i++) {
-            $header[] = "X-Ops-Authorization-" . ($i + 1) . ": " . trim($shrapnel[$i]);
+            if (strlen(trim($shrapnel[$i])) > 0) {
+                $header[] = "X-Ops-Authorization-" . ($i + 1) . ": " . trim($shrapnel[$i]);
+            }
         }
     }
 
