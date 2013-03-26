@@ -19,7 +19,8 @@ class Chef {
      * @param  string  $version
      * @return void
      */
-    function __construct($server, $client, $key, $version) {
+    function __construct($server, $client, $key, $version)
+    {
         $this->server = $server;
         $this->client = $client;
         $this->key = $key;
@@ -34,7 +35,8 @@ class Chef {
      * @param  string  $method
      * @return mixed
      */
-    function api($endpoint, $method = 'GET', $data = FALSE) {
+    function api($endpoint, $method = 'GET', $data = FALSE)
+    {
         // json encode data
         if ($data && !is_string($data))
             $data = json_encode($data);
@@ -67,7 +69,8 @@ class Chef {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 
         // add data to post en put requests
-        if ($method == 'POST' || $method == 'PUT') {
+        if ($method == 'POST' || $method == 'PUT')
+        {
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
@@ -89,8 +92,8 @@ class Chef {
      * @param  string  $key
      * @return object
      */
-    function encrypt($data, $key) {
-
+    function encrypt($data, $key)
+    {
         // encryption method
         $method = 'aes-256-cbc';
 
@@ -99,9 +102,8 @@ class Chef {
         $iv = mcrypt_create_iv($size, MCRYPT_RAND);
 
         // check if file name was given
-        if (file_exists($key)) {
+        if (file_exists($key))
             $key = file_get_contents($key);
-        }
 
         // create wrapper object
         $wrapper = new \stdClass;
@@ -124,17 +126,15 @@ class Chef {
      * @param  string  $key
      * @return mixed
      */
-    function decrypt($data, $key) {
-
+    function decrypt($data, $key)
+    {
         // can only decrypt a valid object
-        if (!is_object($data) || !isset($data->encrypted_data)) {
+        if (!is_object($data) || !isset($data->encrypted_data))
             return false;
-        }
 
         // check if file name was given
-        if (file_exists($key)) {
+        if (file_exists($key))
             $key = file_get_contents($key);
-        }
 
         // decrypt data
         $json = openssl_decrypt($data->encrypted_data, $data->cipher, pack('H*', hash('sha256', $key)), false, base64_decode($data->iv));
@@ -152,7 +152,8 @@ class Chef {
      * @param  array   $headers
      * @return void
      */
-    private function sign($endpoint, $method, $data, &$header) {
+    private function sign($endpoint, $method, $data, &$header)
+    {
         // generate timestamp
         $timestamp = gmdate("Y-m-d\TH:i:s\Z");
 
@@ -177,8 +178,10 @@ class Chef {
 
         // add signature to header
         $shrapnel = explode("\n", chunk_split($encoded, 60));
-        for ($i = 0; $i < count($shrapnel); $i++) {
-            if (strlen(trim($shrapnel[$i])) > 0) {
+        for ($i = 0; $i < count($shrapnel); $i++)
+        {
+            if (strlen(trim($shrapnel[$i])) > 0)
+            {
                 $header[] = "X-Ops-Authorization-" . ($i + 1) . ": " . trim($shrapnel[$i]);
             }
         }
