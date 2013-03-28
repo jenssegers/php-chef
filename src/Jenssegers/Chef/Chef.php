@@ -66,6 +66,11 @@ class Chef {
             curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint);
         }
 
+        // json encode data
+        if ($data && !is_string($data)) {
+            $data = json_encode($data);
+        }
+
         // sign the request
         $this->sign($endpoint, $method, $data, $header);
 
@@ -80,11 +85,6 @@ class Chef {
         // add data to post en put requests
         if ($method == 'POST' || $method == 'PUT')
         {
-            // json encode data
-            if ($data && !is_string($data)) {
-                $data = json_encode($data);
-            }
-
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
