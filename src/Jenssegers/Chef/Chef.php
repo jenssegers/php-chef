@@ -44,26 +44,28 @@ class Chef {
             'X-Chef-Version: ' . $this->version
         );
 
-        // endpoint needs to start with forward slash
-        if (substr($endpoint, 0, 1) != '/')
-        {
-            $endpoint = '/' . $endpoint;
-        }
-
         // method always uppercase
         $method = strtoupper($method);
 
-        // initiate curl object
-        $ch = curl_init();
+        // check if endpoint is full url
+        if ($parts = parse_url($endpoint) && isset($parts['host']))
+        {
+            // split server and endpoint
+            $endpoint = $parts['path'];
+            $url = $endpoint;
+        }
+        else
+        {
+            // prepend own server to endpoint
+            $endpoint = '/' . ltrim($endpoint, '/');
+            $url = $this->server . $endpoint;
+        }
 
         // append data to url if GET request
         if ($method == 'GET' && is_array($data))
         {
-            curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint . '?' . http_build_query($data));
+            $url .= '?' . http_build_query($data);
             $data = FALSE;
-        } else
-        {
-            curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint);
         }
 
         // json encode data
@@ -74,7 +76,9 @@ class Chef {
         // sign the request
         $this->sign($endpoint, $method, $data, $header);
 
-        // initiate curl request
+        // initiate curl
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // this should be verified
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
