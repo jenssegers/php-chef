@@ -37,10 +37,6 @@ class Chef {
      */
     function api($endpoint, $method = 'GET', $data = FALSE)
     {
-        // json encode data
-        if ($data && !is_string($data))
-            $data = json_encode($data);
-
         // basic header
         $header = array(
             'Accept: application/json',
@@ -50,17 +46,30 @@ class Chef {
 
         // endpoint needs to start with forward slash
         if (substr($endpoint, 0, 1) != '/')
+        {
             $endpoint = '/' . $endpoint;
+        }
 
         // method always uppercase
         $method = strtoupper($method);
 
+        // initiate curl object
+        $ch = curl_init();
+
+        // append data to url if GET request
+        if ($method == 'GET' && is_array($data))
+        {
+            curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint . '?' . http_build_query($data));
+            $data = FALSE;
+        } else
+        {
+            curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint);
+        }
+
         // sign the request
         $this->sign($endpoint, $method, $data, $header);
 
-        // initiate curl requset
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->server . $endpoint);
+        // initiate curl request
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // this should be verified
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -71,6 +80,11 @@ class Chef {
         // add data to post en put requests
         if ($method == 'POST' || $method == 'PUT')
         {
+            // json encode data
+            if ($data && !is_string($data)) {
+                $data = json_encode($data);
+            }
+
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
@@ -80,7 +94,9 @@ class Chef {
         curl_close($ch);
         
         if ($response !== FALSE)
+        {
             return json_decode($response);
+        }
 
         return $response;
     }
@@ -130,11 +146,15 @@ class Chef {
     {
         // can only decrypt a valid object
         if (!is_object($data) || !isset($data->encrypted_data))
+        {
             return false;
+        }
 
         // check if file name was given
         if (file_exists($key))
+        {
             $key = file_get_contents($key);
+        }
 
         // decrypt data
         $json = openssl_decrypt($data->encrypted_data, $data->cipher, pack('H*', hash('sha256', $key)), false, base64_decode($data->iv));
