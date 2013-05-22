@@ -19,7 +19,7 @@ class Chef {
      * @param  string  $version
      * @return void
      */
-    function __construct($server, $client, $key, $version = '11.0.x')
+    function __construct($server, $client, $key, $version = '0.11.x')
     {
         $this->server = $server;
         $this->client = $client;
