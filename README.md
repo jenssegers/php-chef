@@ -10,11 +10,13 @@ Installation
 
 Add `jenssegers/chef` as a requirement to composer.json:
 
-    {
-        "require": {
-            "jenssegers/chef": "dev-master"
-        }
+```yaml
+{
+    "require": {
+        "jenssegers/chef": "dev-master"
     }
+}
+```
 
 Update your packages with `composer update` or install with `composer install`.
 
@@ -23,15 +25,17 @@ Usage
 
 Create a chef object like this:
 
-    // composer
-    require_once 'vendor/autoload.php';
-    use Jenssegers\Chef\Chef;
+```php
+// composer
+require_once 'vendor/autoload.php';
+use Jenssegers\Chef\Chef;
 
-    // create chef object
-    $chef = new Chef($server, $client, $key, $version);
+// create chef object
+$chef = new Chef($server, $client, $key, $version);
 
-    // API request
-    $response = $chef->api($endpoint, $method, $data);
+// API request
+$response = $chef->api($endpoint, $method, $data);
+```
 
 See http://docs.opscode.com/api_chef_server.html for all available endpoints.
 
@@ -40,15 +44,21 @@ Laravel
  
 Register the Chef package with Laravel in `app/config/app.php`, add the following provider:
 
-    'Jenssegers\Chef\ChefServiceProvider',
+```php
+'Jenssegers\Chef\ChefServiceProvider',
+```
 
 And this alias:
 
-    'Chef'            => 'Jenssegers\Chef\Facades\Chef'
+```php
+'Chef'            => 'Jenssegers\Chef\Facades\Chef'
+```
 
 Create a copy of the configuration file using Artisan:
 
-    $ php artisan config:publish jenssegers/chef
+```bash
+php artisan config:publish jenssegers/chef
+```
 
 Edit the created configuration file in `app/config/packages/jenssegers/chef/config.php` to match your environment:
 
@@ -62,22 +72,30 @@ Examples
 
 Get nodes:
 
-    $nodes = $chef->get('/nodes');
+```php
+$nodes = $chef->get('/nodes');
+```
 
 Create a data bag:
 
-    $bag = new stdClass;
-    $bag->name = "test";
+```php
+$bag = new stdClass;
+$bag->name = "test";
 
-    $resp = $chef->post('/data', $bag);
+$resp = $chef->post('/data', $bag);
+```
 
 Update a node:
 
-    $node = $chef->get('/nodes/webserver1');
-    $node->attributes->type = "webserver";
+```php
+$node = $chef->get('/nodes/webserver1');
+$node->attributes->type = "webserver";
 
-    $chef->put('/nodes/webserver1', $node);
+$chef->put('/nodes/webserver1', $node);
+```
 
 Delete a data bag:
 
-    $chef->delete('/data/test/item');
+```php
+$chef->delete('/data/test/item');
+```
