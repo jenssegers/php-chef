@@ -19,12 +19,58 @@ class Chef {
      * @param  string  $version
      * @return void
      */
-    function __construct($server, $client, $key, $version)
+    function __construct($server, $client, $key, $version = '11.0.x')
     {
         $this->server = $server;
         $this->client = $client;
         $this->key = $key;
         $this->version = $version;
+    }
+
+    /**
+     * API GET request
+     *
+     * @param  string  $endpoint
+     * @return mixed
+     */
+    function get($endpoint)
+    {
+        return $this->api($endpoint);
+    }
+
+    /**
+     * API POST request
+     *
+     * @param  string  $endpoint
+     * @param  mixed   $data
+     * @return mixed
+     */
+    function post($endpoint, $data = null)
+    {
+        return $this->api($endpoint, 'POST', $data);
+    }
+
+    /**
+     * API PUT request
+     *
+     * @param  string  $endpoint
+     * @param  mixed   $data
+     * @return mixed
+     */
+    function put($endpoint, $data = null)
+    {
+        return $this->api($endpoint, 'PUT', $data);
+    }
+
+    /**
+     * API DELETE request
+     *
+     * @param  string  $endpoint
+     * @return mixed
+     */
+    function delete($endpoint)
+    {
+        return $this->api($endpoint, 'DELETE');
     }
 
     /**
@@ -48,11 +94,12 @@ class Chef {
         $method = strtoupper($method);
 
         // check if endpoint is full url
-        if ($parts = parse_url($endpoint) && isset($parts['host']))
+        $parts = parse_url($endpoint);
+        if (isset($parts['host']))
         {
             // split server and endpoint
             $endpoint = $parts['path'];
-            $url = $endpoint;
+            $url = $this->server . $endpoint;
         }
         else
         {
@@ -123,7 +170,9 @@ class Chef {
 
         // check if file name was given
         if (file_exists($key))
+        {
             $key = file_get_contents($key);
+        }
 
         // create wrapper object
         $wrapper = new \stdClass;
