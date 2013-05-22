@@ -6,7 +6,7 @@ The Chef Server API is used to provide access to objects on the Chef Server, inc
 *This library is a generic library and has additional support for the Laravel framework.*
 
 Installation
-============
+------------
 
 Add `jenssegers/chef` as a requirement to composer.json:
 
@@ -19,7 +19,7 @@ Add `jenssegers/chef` as a requirement to composer.json:
 Update your packages with `composer update` or install with `composer install`.
 
 Usage
-=====
+-----
 
 Create a chef object like this:
 
@@ -36,7 +36,7 @@ Create a chef object like this:
 See http://docs.opscode.com/api_chef_server.html for all available endpoints.
 
 Laravel
-=======
+-------
  
 Register the Chef package with Laravel in `app/config/app.php`, add the following provider:
 
@@ -58,7 +58,7 @@ Edit the created configuration file in `app/config/packages/jenssegers/chef/conf
     'version' = the version of the Chef Server API that is being used
 
 Examples
-========
+--------
 
 Get nodes:
 
