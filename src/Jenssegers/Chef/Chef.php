@@ -231,7 +231,7 @@ class Chef {
         $timestamp = gmdate("Y-m-d\TH:i:s\Z");
 
         // add X-Ops headers
-        $header[] = 'X-Ops-Sign: version=1.0';
+        $header[] = 'X-Ops-Sign: algorithm=sha1;version=1.0';
         $header[] = 'X-Ops-UserId: ' . $this->client;
         $header[] = 'X-Ops-Timestamp: ' . $timestamp;
         $header[] = 'X-Ops-Content-Hash: ' . base64_encode(sha1($data, true));
