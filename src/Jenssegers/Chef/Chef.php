@@ -25,6 +25,12 @@ class Chef {
         $this->client = $client;
         $this->key = $key;
         $this->version = $version;
+        
+        // get private key content
+        if (file_exists($key)) 
+        {
+            $this->key = file_get_contents($key);
+        }
     }
 
     /**
@@ -245,8 +251,7 @@ class Chef {
             "X-Ops-UserId:" . $this->client;
 
         // encrypt signature with private key
-        $key = openssl_get_privatekey("file://" . $this->key);
-        openssl_private_encrypt($signature, $crypted, $key);
+        openssl_private_encrypt($signature, $crypted, $this->key);
         $encoded = base64_encode($crypted);
 
         // add signature to header
