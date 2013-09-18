@@ -25,9 +25,9 @@ class Chef {
         $this->client = $client;
         $this->key = $key;
         $this->version = $version;
-        
+
         // get private key content
-        if (file_exists($key)) 
+        if (file_exists($key))
         {
             $this->key = file_get_contents($key);
         }
@@ -148,11 +148,23 @@ class Chef {
 
         // execute
         $response = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
+        // we got a response
         if ($response !== FALSE)
         {
-            return json_decode($response);
+            // decode json
+            $response = json_decode($response);
+
+            // throw exception if there was an error
+            if ($status != 200 && isset($response->error))
+            {
+                $message = reset($response->error);
+                throw new \Exception($message, $status);
+            }
+
+            return $response;
         }
 
         return $response;
@@ -217,7 +229,7 @@ class Chef {
 
         // decrypt data
         $json = openssl_decrypt($data->encrypted_data, $data->cipher, pack('H*', hash('sha256', $key)), false, base64_decode($data->iv));
-    
+
         // return content
         return json_decode($json)->json_wrapper;
     }
@@ -243,7 +255,7 @@ class Chef {
         $header[] = 'X-Ops-Content-Hash: ' . base64_encode(sha1($data, true));
 
         // create signature
-        $signature = 
+        $signature =
             "Method:" . $method . "\n" .
             "Hashed Path:" . base64_encode(sha1($endpoint, true)) . "\n" .
             "X-Ops-Content-Hash:" . base64_encode(sha1($data, true)) . "\n" .
