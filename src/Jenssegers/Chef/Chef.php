@@ -126,6 +126,7 @@ class Chef {
             $data = json_encode($data);
         }
 
+
         // sign the request
         $this->sign($endpoint, $method, $data, $header);
 
@@ -133,11 +134,15 @@ class Chef {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // this should be verified
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        
+        // most people are using self-signed certs for chef, so its easiest to just
+        // disable ssl verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
         // add data to post en put requests
         if ($method == 'POST' || $method == 'PUT')
@@ -147,15 +152,15 @@ class Chef {
         }
 
         // execute
-        $response = curl_exec($ch);
+        $raw_response = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         // we got a response
-        if ($response !== FALSE)
+        if ($raw_response !== FALSE)
         {
             // decode json
-            $response = json_decode($response);
+            $response = json_decode($raw_response);
 
             // throw exception if there was an error
             if ($status != 200 && isset($response->error))
@@ -163,11 +168,15 @@ class Chef {
                 $message = reset($response->error);
                 throw new \Exception($message, $status);
             }
+            elseif ($response === null)
+            {
+                throw new \Exception($raw_response, $status);
+            }
 
             return $response;
         }
 
-        return $response;
+        return $raw_response;
     }
 
     /**
@@ -276,5 +285,4 @@ class Chef {
             }
         }
     }
-
 }
