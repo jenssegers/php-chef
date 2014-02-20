@@ -6,6 +6,7 @@ class Chef {
     protected $key;
     protected $client;
     protected $version;
+    protected $enterprise_org;
 
     // the number of seconds to wait while trying to connect
     protected $timeout = 10;
@@ -19,7 +20,7 @@ class Chef {
      * @param  string  $version
      * @return void
      */
-    function __construct($server, $client, $key, $version = '0.11.x')
+    function __construct($server, $client, $key, $version = '0.11.x', $enterprise = false)
     {
         $this->server = $server;
         $this->client = $client;
@@ -30,6 +31,15 @@ class Chef {
         if (file_exists($key))
         {
             $this->key = file_get_contents($key);
+        }
+
+        if ($enterprise)
+        {
+            $this->enterprise_org = end(explode('/', trim($server, '/')));
+        }
+        else
+        {
+            $this->enterprise_org = false;
         }
     }
 
@@ -262,6 +272,12 @@ class Chef {
         $header[] = 'X-Ops-UserId: ' . $this->client;
         $header[] = 'X-Ops-Timestamp: ' . $timestamp;
         $header[] = 'X-Ops-Content-Hash: ' . base64_encode(sha1($data, true));
+
+        //rewrite the endpoint for enterprise organizations
+        if ($this->enterprise_org !== false)
+        {
+            $endpoint = "/organizations/".$this->enterprise_org.$endpoint;
+        }
 
         // create signature
         $signature =
