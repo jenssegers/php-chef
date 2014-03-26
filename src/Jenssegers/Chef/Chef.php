@@ -163,6 +163,10 @@ class Chef {
 
         // execute
         $raw_response = curl_exec($ch);
+        if($raw_response === false) {
+            $curl_errno = curl_errno($ch);
+            $curl_error = curl_error($ch);
+        }
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
@@ -184,6 +188,8 @@ class Chef {
             }
 
             return $response;
+        } else {
+            throw new \Exception($curl_error, $curl_errno);
         }
 
         return $raw_response;
