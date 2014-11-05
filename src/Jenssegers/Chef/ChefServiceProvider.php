@@ -35,8 +35,9 @@ class ChefServiceProvider extends ServiceProvider {
             $client = $app['config']->get('chef::client');
             $key = $app['config']->get('chef::key');
             $version = $app['config']->get('chef::version');
+            $enterprise = $app['config']->get('chef::enterprise');
 
-            return new Chef($server, $client, $key, $version);
+            return new Chef($server, $client, $key, $version,$enterprise);
         });
     }
 
