@@ -35,7 +35,7 @@ class Chef {
 
         if ($enterprise)
         {
-             $url = explode('/', trim($server, '/'));
+            $url = explode('/', trim($server, '/'));
             $this->enterprise_org = end($url);
         }
         else
