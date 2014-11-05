@@ -16,4 +16,5 @@ return array(
     'client'    => 'client',
     'key'       => '/etc/chef/client.pem',
     'version'   => '0.11.4',
+    "enterprise" => false
 );
