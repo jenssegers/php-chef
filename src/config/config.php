@@ -11,10 +11,10 @@
 | 'version' = the version of the Chef Server API that is being used
 */
 
-return array(
+return [
     'server'    => 'https://localhost',
     'client'    => 'client',
     'key'       => '/etc/chef/client.pem',
-    'version'   => '0.11.4',
+    'version'   => '12.0.0',
     "enterprise" => false
-);
+];

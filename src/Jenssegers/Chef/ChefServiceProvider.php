@@ -18,7 +18,9 @@ class ChefServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->package('jenssegers/chef');
+        $this->publishes([
+         __DIR__ . '/../../config/config.php' => config_path('chef.php')
+         ], 'config');
     }
 
     /**
@@ -28,16 +30,15 @@ class ChefServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $this->app['chef'] = $this->app->share(function($app)
-        {
+        $this->app['chef'] = $this->app->share(function () {
             // load settings from configuration
-            $server = $app['config']->get('chef::server');
-            $client = $app['config']->get('chef::client');
-            $key = $app['config']->get('chef::key');
-            $version = $app['config']->get('chef::version');
-            $enterprise = $app['config']->get('chef::enterprise');
+            $server     = config('chef.server');
+            $client     = config('chef.client');
+            $key        = config('chef.key');
+            $version    = config('chef.version');
+            $enterprise = config('chef.enterprise');
 
-            return new Chef($server, $client, $key, $version,$enterprise);
+            return new Chef($server, $client, $key, $version, $enterprise);
         });
     }
 
@@ -50,5 +51,4 @@ class ChefServiceProvider extends ServiceProvider {
     {
         return array('Chef');
     }
-
 }
