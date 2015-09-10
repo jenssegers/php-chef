@@ -7,6 +7,7 @@ class Chef {
     protected $client;
     protected $version;
     protected $enterprise_org;
+    protected $reportingVersion;
 
     // the number of seconds to wait while trying to connect
     protected $timeout = 10;
@@ -18,15 +19,17 @@ class Chef {
      * @param  string  $client
      * @param  string  $key
      * @param  string  $version
+     * @param  string  $reportingVersion
      * @return void
      */
-    function __construct($server, $client, $key, $version = '0.11.x', $enterprise = false)
+    function __construct($server, $client, $key, $version = '0.11.x', $enterprise = false, $reportingVersion = '0.1.0')
     {
         $this->server = $server;
         $this->client = $client;
         $this->key = $key;
         $this->version = $version;
-
+        $this->reportingVersion = $reportingVersion;
+        
         // get private key content
         if (file_exists($key))
         {
@@ -104,7 +107,8 @@ class Chef {
         $header = array(
             'Accept: application/json',
             'Content-Type: application/json',
-            'X-Chef-Version: ' . $this->version
+            'X-Chef-Version: ' . $this->version,
+            'X-Ops-Reporting-Protocol-Version: '.$this->reportingVersion
         );
 
         // method always uppercase
