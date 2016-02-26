@@ -180,7 +180,10 @@ class Chef {
             // throw exception if there was an error
             if ($status != 200 && isset($response->error))
             {
-                $message = reset($response->error);
+                $message = $response->error;
+                if(is_array($response->error)){
+                    $message = reset($response->error);
+                }
                 throw new \Exception($message, $status);
             }
             elseif ($response === null)
