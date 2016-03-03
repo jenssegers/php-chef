@@ -143,7 +143,7 @@ class Chef {
 
 
         // sign the request
-        $this->sign($endpoint, $method, $data, $header);
+        $this->sign($parts['path'], $method, $data, $header);
 
         // initiate curl
         $ch = curl_init();
