@@ -29,7 +29,7 @@ class Chef {
         $this->key = $key;
         $this->version = $version;
         $this->reportingVersion = $reportingVersion;
-        
+
         // get private key content
         if (file_exists($key))
         {
@@ -141,9 +141,11 @@ class Chef {
             $data = json_encode($data);
         }
 
-
+        // Remove possible parameters from the endpoint
+        // (Otherwise this will cause a Invalid signature)
+        $s_endpoint= explode('?', $endpoint, 2)[0];
         // sign the request
-        $this->sign($endpoint, $method, $data, $header);
+        $this->sign($s_endpoint, $method, $data, $header);
 
         // initiate curl
         $ch = curl_init();
@@ -153,7 +155,7 @@ class Chef {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        
+
         // most people are using self-signed certs for chef, so its easiest to just
         // disable ssl verification
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
