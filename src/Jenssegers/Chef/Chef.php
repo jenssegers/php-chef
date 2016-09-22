@@ -143,7 +143,7 @@ class Chef {
 
         // Remove possible parameters from the endpoint
         // (Otherwise this will cause a Invalid signature)
-        $s_endpoint= explode('?', $endpoint, 2)[0];
+        $s_endpoint = parse_url($url, PHP_URL_PATH);
         // sign the request
         $this->sign($s_endpoint, $method, $data, $header);
 
