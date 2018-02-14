@@ -12,7 +12,6 @@
     "require": {
         "ext-curl": "*",
         "ext-json": "*",
-        "ext-mcrypt": "*",
         "ext-openssl": "*",
         "php": ">=5.3.0"
     },
