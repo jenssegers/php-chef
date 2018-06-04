@@ -29,7 +29,7 @@ class Chef {
         $this->key = $key;
         $this->version = $version;
         $this->reportingVersion = $reportingVersion;
-        
+
         // get private key content
         if (file_exists($key))
         {
@@ -53,9 +53,9 @@ class Chef {
      * @param  string  $endpoint
      * @return mixed
      */
-    function get($endpoint)
+    function get($endpoint, $data = FALSE)
     {
-        return $this->api($endpoint);
+        return $this->api($endpoint, 'GET', $data);
     }
 
     /**
@@ -153,7 +153,7 @@ class Chef {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        
+
         // most people are using self-signed certs for chef, so its easiest to just
         // disable ssl verification
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
